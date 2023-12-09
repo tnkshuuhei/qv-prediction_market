@@ -55,7 +55,7 @@ contract PredictionMarket is Initializable {
     mapping(Outcomes => uint256) public totalBalances;
 
     // hypothetically, contract should be deployed for each market by a factory contract
-    function Initialize(
+    function initialize(
         address _oracle,
         string memory description,
         string memory outcome1,
