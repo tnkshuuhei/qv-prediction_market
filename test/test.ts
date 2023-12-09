@@ -29,4 +29,12 @@ describe("Contract Test", () => {
   it("Should deploy the contract", async () => {
     expect(contract.address).to.not.equal(0);
   });
+  it("Should initialize Market", async () => {
+    let initialMarketId = await contract.getInitialMarketId();
+    let initialMarket = await contract.getMarket(initialMarketId);
+
+    console.log(ethers.toUtf8String(initialMarket.description));
+
+    expect(await contract.getInitialMarketId()).to.not.equal(0);
+  });
 });

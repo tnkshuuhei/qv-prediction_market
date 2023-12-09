@@ -46,6 +46,8 @@ contract PredictionMarket is Initializable {
 
     address public oracle;
 
+    bytes32 public initializedMarketId;
+
     mapping(bytes32 => Market) public markets; // Maps marketId to Market struct.
     // Maps user address to outcome to uint256.
     // track balances of each user for each outcome
@@ -60,16 +62,18 @@ contract PredictionMarket is Initializable {
         string memory description,
         string memory outcome1,
         string memory outcome2
-    ) public initializer {
+    ) public initializer returns (bytes32 marketId) {
         oracle = _oracle;
-        InitializeMarket(description, outcome1, outcome2);
+        marketId = InitializeMarket(description, outcome1, outcome2);
+        initializedMarketId = marketId;
+        return marketId;
     }
 
     function InitializeMarket(
         string memory description,
         string memory outcome1,
         string memory outcome2
-    ) public payable returns (bytes32 marketId) {
+    ) internal returns (bytes32 marketId) {
         require(bytes(outcome1).length > 0, "Empty first outcome");
         require(bytes(outcome2).length > 0, "Empty second outcome");
         require(
@@ -164,5 +168,39 @@ contract PredictionMarket is Initializable {
 
     function getMarket(bytes32 marketId) public view returns (Market memory) {
         return markets[marketId];
+    }
+
+    function getMarketStatus(
+        bytes32 marketId
+    ) public view returns (MarketStatus) {
+        return markets[marketId].status;
+    }
+
+    function getInitialMarketId() public view returns (bytes32) {
+        return initializedMarketId;
+    }
+
+    function getOracle() public view returns (address) {
+        return oracle;
+    }
+
+    function getMarketResult() public view returns (Result memory) {
+        return result;
+    }
+
+    function getMarketBalances(
+        address user
+    ) public view returns (uint256, uint256) {
+        return (
+            balances[user][Outcomes.Outcome1],
+            balances[user][Outcomes.Outcome2]
+        );
+    }
+
+    function getTotalBalances() public view returns (uint256, uint256) {
+        return (
+            totalBalances[Outcomes.Outcome1],
+            totalBalances[Outcomes.Outcome2]
+        );
     }
 }
